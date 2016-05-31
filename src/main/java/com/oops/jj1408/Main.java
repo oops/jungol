@@ -1,7 +1,9 @@
 package com.oops.jj1408;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -22,7 +24,6 @@ public class Main {
         Scanner scanner = null;
         try
         {
-            if(DEBUG) System.out.println("Enter the number of nodes in the graph");
             System.setIn(new FileInputStream("D:\\source\\jungol\\src\\main\\java\\com\\oops\\jj1408\\input.txt"));
             scanner = new Scanner(System.in);
             LINE_COUNT = scanner.nextInt();
@@ -38,6 +39,8 @@ public class Main {
             }
             makeSmallLineTo();
 
+            int result = dfs(SMALL_LINE_TO, 0);
+            System.out.println(LINE_COUNT-result);
             printLIne();
 
 
@@ -48,6 +51,38 @@ public class Main {
         scanner.close();
 
     }
+
+
+    public static int dfs(int[] inputData , int index) {
+
+        if( index == LINE_COUNT-1) return 0;
+
+        int saved = inputData[index];
+
+
+        inputData[index] = 0;
+        int exceptMe = dfs(inputData, index+1);
+        inputData[index] = saved;
+
+        if( saved == 0 ) return exceptMe;
+
+        int[] COPYED_LINE_TO = new int[LINE_COUNT];
+        System.arraycopy( inputData, 0, COPYED_LINE_TO, 0, LINE_COUNT);
+
+        for (int i = index+1; i < LINE_COUNT; i++) {
+            if(inputData[index] > inputData[i]) {
+                COPYED_LINE_TO[i] = 0;
+            }
+        }
+
+        int includeMe = 1 + dfs(COPYED_LINE_TO, index+1);
+
+
+        return Math.max(exceptMe, includeMe);
+
+    }
+
+
 
     public static void printLIne(){
         if( !DEBUG ) return;
