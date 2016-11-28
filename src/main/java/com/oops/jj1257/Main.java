@@ -1,7 +1,10 @@
-package com.oops.jj1408;
+package com.oops.jj1257;
 
 import java.io.FileInputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.InputMismatchException;
+import java.util.Map;
+import java.util.Scanner;
 
 /**
  *
@@ -14,6 +17,7 @@ public class Main {
     public static int[] SMALL_LINE_TO;
     public static int[] SMALL_LINE_TO_ORG;
     public static int[] USE_01;
+    public static int[] endAtMeSize;
 
     public static boolean DEBUG = true;
     public static Map<String, Integer> mem = new HashMap<String, Integer>();
@@ -25,7 +29,7 @@ public class Main {
         Scanner scanner = null;
         try
         {
-            System.setIn(new FileInputStream("D:\\source\\jungol\\src\\main\\java\\com\\oops\\jj1408\\input.txt"));
+            System.setIn(new FileInputStream("D:\\source\\jungol\\src\\main\\java\\com\\oops\\jj1257\\input.txt"));
             scanner = new Scanner(System.in);
             LINE_COUNT = scanner.nextInt();
             LINE_TO = new int[501];
@@ -42,8 +46,9 @@ public class Main {
             }
             makeSmallLineTo();
 
-//            System.out.println(LINE_COUNT-dfs(SMALL_LINE_TO));
             System.out.println(SMALL_LINE_TO.length - lis(SMALL_LINE_TO));
+            printLIne();
+            printEndAtMeWithoutZero();
 
         } catch (InputMismatchException inputMismatch)
         {
@@ -56,83 +61,68 @@ public class Main {
 
     /**
      * http://blog.naver.com/rym/220504883742
-     *  - 주어진 배열 S가 주어졌을 때, S[0 .. i]까지의 부분 배열에서 S[i]로 끝나는 LIS는 무엇인가?
      * @param inputData
      * @return
      */
     public static int lis(int[] inputData ) {
 
-        // 나로 끝나는 LIS 저장하기
-        int[] endAtMeSize = new int[inputData.length];
+        // ?? ??? LIS ????
+        endAtMeSize = new int[inputData.length];
 
         for (int i = 0; i < inputData.length; i++) {
-            // 나로 끝나는 lis의 초기값은 항상 1   - 나만 있으면 되니까....
+            // ?? ??? lis? ???? ?? 1   - ?? ??? ???....
             endAtMeSize[i] = 1;
             for (int j = 0; j < i; j++) {
                 
-                //   앞에 있는 값이 나보다 작고 && 앞에 꺼로 끝나는 것보다 나로 끝나는게 더 크면
-                //   앞의 것을 포함하고 나를 포함하니 1 더 큰 값이 된다.
+                //   ?? ?? ?? ??? ?? && ?? ?? ??? ??? ?? ???? ? ??
+                //   ?? ?? ???? ?? ???? 1 ? ? ?? ??.
                 if(  inputData[i] > inputData[j] &&  endAtMeSize[i] <= endAtMeSize[j] ) {
                     endAtMeSize[i] = endAtMeSize[j] + 1;
                 }
             }
         }
 
-        // 어떤 위치에서 끝나는 것이 가장 좋은지 찾으면 된다.
+        // ?? ???? ??? ?? ?? ??? ??? ??.
         int max = 0;
         for (int i = 0; i < endAtMeSize.length; i++) {
             max = Math.max(max, endAtMeSize[i]);
         }
+
+        System.out.println("====================");
+        for (int i = 0; i < endAtMeSize.length; i++) {
+
+            System.out.println(endAtMeSize[i]);
+        }
+        for (int i = endAtMeSize.length-1; i >=0 ; i--) {
+
+            if( endAtMeSize[i] == max ) {
+                max--;
+            } else {
+                endAtMeSize[i] = 0;
+            }
+        }
+
         return max;
 
 
     }
 
-
-    public static int dfs(int[] inputData ) {
-
-        if( inputData.length == 1 ) return 1;
-
-        ///////////////////////////////////////////////////////////////////////////////
-        // 나를 빼고 가장 큰 값 찾기
-        int[] copy1 = new int[inputData.length-1];
-        System.arraycopy(inputData, 1, copy1, 0, inputData.length-1);
-        int exceptMe = dfs(copy1);
-
-
-        ///////////////////////////////////////////////////////////////////////////////
-        // 나를 포함하고 가장 큰 값 찾기...
-        // 나보다 큰 값들의 개수 구하기
-        int excludeMeArraySize = 0;
-        for (int i = 1; i < inputData.length; i++) {
-            if(inputData[0] < inputData[i] ) excludeMeArraySize++;
-        }
-
-        // 나보다 큰게 없으면 그냥 끝
-        if( excludeMeArraySize == 0 ) return exceptMe;
-
-        // 나보다 큰 값들로만 array만들고
-        int[] copy2 = new int[excludeMeArraySize];
-        int copy2Index = 0;
-        for (int i = 1; i < inputData.length; i++) {
-            if(inputData[0] < inputData[i] ) copy2[copy2Index++] = inputData[i];
-        }
-
-        // 내가 포함되니 1 더하고 나머지만으로 가장 큰 값 찾기.
-        int includeMe = 1 +dfs(copy2);
-        ///////////////////////////////////////////////////////////////////////////////
-        
-        return Math.max(exceptMe, includeMe);
-
-    }
-
-
     public static void printLIne(){
+        System.out.println("=====================");
         if( !DEBUG ) return;
         for (int i = 0; i < LINE_COUNT; i++) {
             System.out.println( i + " " + SMALL_LINE_TO[i]);
         }
     }
+
+    public static void printEndAtMeWithoutZero(){
+        if( !DEBUG ) return;
+        System.out.println("=====================");
+        for (int i = 0; i < endAtMeSize.length; i++) {
+            if( endAtMeSize[i] > 0 ) System.out.println(SMALL_LINE_TO[i]);
+        }
+    }
+
 
     public static void makeSmallLineTo() {
 
