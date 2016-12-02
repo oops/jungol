@@ -3,11 +3,10 @@ package com.baekjoon.b10164;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
-/**
- * Created by SDS on 2016-11-30.
- */
 public class Main {
 
     public static void main(String... args) throws Exception {
@@ -26,40 +25,38 @@ public class Main {
 
         int xx = P % X ;
         int yy = P / X + 1;
+        if( xx == 0 ) {
+            xx = X;
+            yy--;
+        }
 
-        if( P == 0 ) result = solve2(X,Y, 0, 0 );
+        if( P == 0 || X * Y == P || P == 1) result = solve2(X,Y, 0, 0 );
         else result = solve2(xx, yy, 0, 0) * solve2( X-xx+1 , Y-yy+1 , 0, 0);
 
 
         System.out.println(result);
     }
-//
-//    private static int solve(int X, int Y) {
-//
-//
-//
-//        int result = 0;
-//        if( X ==1 || Y == 1 ) result = 1;
-//
-//
-//        for (int i = 1; i < X; i++) {
-//
-//            sum += solve( X -  , )
-//        }
-//
-//    }
+
     private static int solve2(int X, int Y, int xx, int yy) {
 
+        int mem = getMemData(X, Y, xx, yy);
+        if( mem >= 0 ) {
+            return mem;
+        }
+
         int result = 0;
-        if( X ==1 || Y == 1 ) result = 1;
+        if( X <2  || Y < 2 ) result = 1;
         if( X == 2 ) result = Y;
         if( Y == 2 ) result = X;
 
-        if( result > 0 ) return result;
+        if( result > 0 ) {
+            setMemData(X, Y, xx, yy, result);
+            return result;
+        }
 
 
         if( xx == 0 || yy == 0 ) {
-            for (int i = 1; i < X && Y-i > 0 ; i++) {
+            for (int i = 1; i <= X && Y-i+1 > 0 ; i++) {
                 result += solve2( X , Y  , i , Y-i+1) ;
             }
         } else {
@@ -67,9 +64,28 @@ public class Main {
 
         }
 
+        setMemData(X, Y, xx, yy, result);
         return result;
 
     }
+
+    public static int D = 20;
+    public static Map<Integer, Integer> MEM = new HashMap<Integer, Integer>();
+
+
+    public static int getMemData(int x1, int x2, int x3, int x4){
+        int key = ((x1 * D + x2) * D + x3) * D + x4;
+        if( MEM.containsKey(key)) {
+            return MEM.get(key);
+        }
+        return -1;
+    }
+
+    public static void setMemData(int x1, int x2, int x3, int x4, int value){
+        int key = ((x1 * D + x2) * D + x3) * D + x4;
+        MEM.put(key, value);
+    }
+
 
 
 }
