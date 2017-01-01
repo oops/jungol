@@ -19,8 +19,8 @@ public class Solution1 {
 
     public static void main(String...arg) {
         Solution1 s = new Solution1();
-        String S = "Forget  CVs..Save time . x x";
-        String S2 = "We test coders. Give us a try?";
+        String S = "Test Some String. is it right? how?";
+        String S2 = "I just finished my homework. but I do not know the result. how do you think? plz tell me";
         System.out.println(s.solution(S));
         System.out.println(s.solution(S2));
     }
